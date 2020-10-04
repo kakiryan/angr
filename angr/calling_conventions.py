@@ -1063,7 +1063,18 @@ class SimCCMicrosoftAMD64(SimCC):
     ARCH = archinfo.ArchAMD64
     STACK_ALIGNMENT = 16
 
-class SimCCX86LinuxSyscall(SimCC):
+
+class SimCCSyscall(SimCC):
+    """
+    The base class of all syscall CCs.
+    """
+
+    @staticmethod
+    def syscall_num(state) -> int:
+        raise NotImplementedError()
+
+
+class SimCCX86LinuxSyscall(SimCCSyscall):
     ARG_REGS = ['ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp']
     FP_ARG_REGS = []
     RETURN_VAL = SimRegArg('eax', 4)
@@ -1079,7 +1090,8 @@ class SimCCX86LinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.eax
 
-class SimCCX86WindowsSyscall(SimCC):
+
+class SimCCX86WindowsSyscall(SimCCSyscall):
     # TODO: Make sure the information is correct
     ARG_REGS = [ ]
     FP_ARG_REGS = [ ]
@@ -1095,6 +1107,7 @@ class SimCCX86WindowsSyscall(SimCC):
     @staticmethod
     def syscall_num(state):
         return state.regs.eax
+
 
 class SimCCSystemVAMD64(SimCC):
     ARG_REGS = ['rdi', 'rsi', 'rdx', 'rcx', 'r8', 'r9']
@@ -1136,7 +1149,8 @@ class SimCCSystemVAMD64(SimCC):
 
         return True
 
-class SimCCAMD64LinuxSyscall(SimCC):
+
+class SimCCAMD64LinuxSyscall(SimCCSyscall):
     ARG_REGS = ['rdi', 'rsi', 'rdx', 'r10', 'r8', 'r9']
     RETURN_VAL = SimRegArg('rax', 8)
     RETURN_ADDR = SimRegArg('ip_at_syscall', 8)
@@ -1151,7 +1165,8 @@ class SimCCAMD64LinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.rax
 
-class SimCCAMD64WindowsSyscall(SimCC):
+
+class SimCCAMD64WindowsSyscall(SimCCSyscall):
     # TODO: Make sure the information is correct
     ARG_REGS = [ ]
     FP_ARG_REGS = [ ]
@@ -1168,6 +1183,7 @@ class SimCCAMD64WindowsSyscall(SimCC):
     def syscall_num(state):
         return state.regs.rax
 
+
 class SimCCARM(SimCC):
     ARG_REGS = [ 'r0', 'r1', 'r2', 'r3' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1176,7 +1192,8 @@ class SimCCARM(SimCC):
     RETURN_VAL = SimRegArg('r0', 4)
     ARCH = archinfo.ArchARM
 
-class SimCCARMLinuxSyscall(SimCC):
+
+class SimCCARMLinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = [ 'r0', 'r1', 'r2', 'r3' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1193,6 +1210,7 @@ class SimCCARMLinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.r7
 
+
 class SimCCAArch64(SimCC):
     ARG_REGS = [ 'x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1200,7 +1218,8 @@ class SimCCAArch64(SimCC):
     RETURN_VAL = SimRegArg('x0', 8)
     ARCH = archinfo.ArchAArch64
 
-class SimCCAArch64LinuxSyscall(SimCC):
+
+class SimCCAArch64LinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = [ 'x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1217,6 +1236,7 @@ class SimCCAArch64LinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.x8
 
+
 class SimCCO32(SimCC):
     ARG_REGS = [ 'a0', 'a1', 'a2', 'a3' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1226,7 +1246,8 @@ class SimCCO32(SimCC):
     RETURN_VAL = SimRegArg('v0', 4)
     ARCH = archinfo.ArchMIPS32
 
-class SimCCO32LinuxSyscall(SimCC):
+
+class SimCCO32LinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = [ 'a0', 'a1', 'a2', 'a3' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1275,7 +1296,8 @@ class SimCCO64(SimCC):      # TODO: add n32 and n64
     RETURN_VAL = SimRegArg('v0', 8)
     ARCH = archinfo.ArchMIPS64
 
-class SimCCO64LinuxSyscall(SimCC):
+
+class SimCCO64LinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = [ 'a0', 'a1', 'a2', 'a3' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1305,7 +1327,8 @@ class SimCCPowerPC(SimCC):
     RETURN_VAL = SimRegArg('r3', 4)
     ARCH = archinfo.ArchPPC32
 
-class SimCCPowerPCLinuxSyscall(SimCC):
+
+class SimCCPowerPCLinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = ['r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10']
     FP_ARG_REGS = [ ]
@@ -1322,6 +1345,7 @@ class SimCCPowerPCLinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.r0
 
+
 class SimCCPowerPC64(SimCC):
     ARG_REGS = [ 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10' ]
     FP_ARG_REGS = []    # TODO: ???
@@ -1330,7 +1354,8 @@ class SimCCPowerPC64(SimCC):
     RETURN_VAL = SimRegArg('r3', 8)
     ARCH = archinfo.ArchPPC64
 
-class SimCCPowerPC64LinuxSyscall(SimCC):
+
+class SimCCPowerPC64LinuxSyscall(SimCCSyscall):
     # TODO: Make sure all the information is correct
     ARG_REGS = [ ]
     FP_ARG_REGS = [ ]
@@ -1347,9 +1372,11 @@ class SimCCPowerPC64LinuxSyscall(SimCC):
     def syscall_num(state):
         return state.regs.r0
 
+
 class SimCCSoot(SimCC):
     ARCH = archinfo.ArchSoot
     ARG_REGS = []
+
 
 class SimCCUnknown(SimCC):
     """
@@ -1363,6 +1390,7 @@ class SimCCUnknown(SimCC):
     def __repr__(self):
         return "<SimCCUnknown - %s %s sp_delta=%d>" % (self.arch.name, self.args, self.sp_delta)
 
+
 class SimCCS390X(SimCC):
     ARG_REGS = ['r2', 'r3', 'r4', 'r5', 'r6']
     FP_ARG_REGS = ['f0', 'f2', 'f4', 'f6']
@@ -1371,7 +1399,8 @@ class SimCCS390X(SimCC):
     RETURN_VAL = SimRegArg('r2', 8)
     ARCH = archinfo.ArchS390X
 
-class SimCCS390XLinuxSyscall(SimCC):
+
+class SimCCS390XLinuxSyscall(SimCCSyscall):
     ARG_REGS = ['r2', 'r3', 'r4', 'r5', 'r6', 'r7']
     FP_ARG_REGS = []
     RETURN_VAL = SimRegArg('r2', 8)
@@ -1386,6 +1415,7 @@ class SimCCS390XLinuxSyscall(SimCC):
     @staticmethod
     def syscall_num(state):
         return state.regs.r1
+
 
 CC = {
     'AMD64': [
@@ -1445,7 +1475,8 @@ DEFAULT_CC: Dict[str,Type[SimCC]] = {
 def register_default_cc(arch, cc):
     DEFAULT_CC[arch] = cc
 
-SYSCALL_CC = {
+
+SYSCALL_CC: Dict[str,Dict[str,Type[SimCCSyscall]]] = {
     'X86': {
         'default': SimCCX86LinuxSyscall,
         'Linux': SimCCX86LinuxSyscall,
