@@ -11,6 +11,17 @@ from .concrete import SimEngineConcrete
 from .hook import HooksMixin
 from .soot import SootMixin
 
-class UberEngine(SimEngineFailure, SimEngineRemoteSyscall, SimEngineSyscall, HooksMixin, SimEngineUnicorn, SuperFastpathMixin, TrackActionsMixin, SimInspectMixin, HeavyResilienceMixin, SootMixin, HeavyVEXMixin):
+class UberEngine(
+    SimEngineFailure,
+    #SimEngineRemoteSyscall,
+    SimEngineSyscall,
+    HooksMixin,
+    SimEngineUnicorn,
+    SuperFastpathMixin,
+    TrackActionsMixin,
+    SimInspectMixin,
+    HeavyResilienceMixin,
+    SootMixin,
+    HeavyVEXMixin):
     pass
 
